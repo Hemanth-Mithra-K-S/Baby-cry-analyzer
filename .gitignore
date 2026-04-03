@@ -1,0 +1,15 @@
+# Ignore models
+*.h5
+*.pth
+*.keras
+
+# Ignore data
+*.npy
+
+# Ignore temp
+temp*
+uploads/
+
+# Python cache
+__pycache__/
+*.pyc

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Baby Cry Classifier</title>
+</head>
+
+<body style="font-family: Arial; background:#f4f6f9;">
+
+<div style="
+    width:500px;
+    margin:50px auto;
+    padding:20px;
+    background:white;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+">
+
+<h2 style="text-align:center;">👶 Baby Cry Classifier</h2>
+
+<input type="file" id="fileInput" style="margin-bottom:10px;">
+<button onclick="predict()" style="
+    padding:8px 15px;
+    background:#4CAF50;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+">Predict</button>
+
+<h3 id="result" style="margin-top:20px;"></h3>
+
+<div id="bars"></div>
+
+</div>
+
+<script>
+function predict() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file!");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("file", file);
+
+    fetch("/predict", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("result").innerText =
+            "Prediction: " + data.prediction;
+
+        showBars(data.classes, data.probabilities);
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error connecting to backend!");
+    });
+}
+
+function showBars(labels, probs) {
+    let container = document.getElementById("bars");
+    container.innerHTML = "";
+
+    probs.forEach((p, i) => {
+        let percent = (p * 100).toFixed(2);
+
+        let color = "#4CAF50";
+        if (percent > 60) color = "#2ecc71";
+        else if (percent > 30) color = "#f1c40f";
+        else color = "#e74c3c";
+
+        let bar = `
+            <div style="margin:10px 0;">
+                <b>${labels[i]}</b> - ${percent}%
+                <div style="background:#ddd; height:20px; border-radius:10px;">
+                    <div style="
+                        width:${percent}%;
+                        background:${color};
+                        height:100%;
+                        border-radius:10px;
+                        transition:0.5s;">
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML += bar;
+    });
+}
+</script>
+
+</body>
+</html>
