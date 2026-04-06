@@ -3,5 +3,5 @@ flask-cors
 numpy
 librosa==0.10.0
 tensorflow==2.13.0
-torch==2.0.1
-gdown
+torch
+soundfile
